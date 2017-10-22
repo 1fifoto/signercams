@@ -1,7 +1,7 @@
 <?php
 if (isset($_POST["submit"])) {
     if (isset($_FILES["file"])) {
-        $file=$_FILES["file"];
+        $file = $_FILES["file"];
         echo "File $file selected <br />";
     } else {
         echo "No file selected <br />";
@@ -12,19 +12,19 @@ if (isset($_POST["submit"])) {
 <html>
 <body>
 	<h1>Signer Cams</h1>
-	<table width="600">
-		<form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post"
-			enctype="multipart/form-data">
+	<form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post"
+		enctype="multipart/form-data">
+		<table>
 			<tr>
-				<td width="20%">Select file</td>
-				<td width="80%"><input type="file" name="file" id="file" /></td>
+				<td>Select file</td>
+				<td><input type="file" name="file" id="file" /></td>
 			</tr>
 			<tr>
 				<td>Submit</td>
 				<td><input type="submit" name="submit" /></td>
 			</tr>
-		</form>
-	</table>
+		</table>
+	</form>
 </body>
 <footer>
 	<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
