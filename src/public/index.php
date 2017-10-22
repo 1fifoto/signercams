@@ -1,8 +1,9 @@
 <?php
+print_r($_POST);
 if (isset($_POST["submit"])) {
+    print_r($_FILES);
     if (isset($_FILES["name"])) {
         echo "File selected <br />";
-        print_r($_FILES);
     } else {
         echo "No file selected <br />";
     }
