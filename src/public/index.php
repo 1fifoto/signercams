@@ -1,7 +1,9 @@
 <?php
-print_r($_POST) . "<br />";
+print_r($_POST);
+echo "<br />";
 if (isset($_POST["submit"])) {
-    print_r($_FILES) . "<br />";
+    print_r($_FILES);
+    echo "<br />";
     if (isset($_FILES["file"]) && isset($_FILES["file"]["name"])) {
         $file = $_FILES["file"]["name"];
         echo "File $file selected <br />";
