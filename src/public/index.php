@@ -1,6 +1,6 @@
 <?php
 if (isset($_POST["submit"])) {
-    if (isset($_FILES["file"])) {
+    if (isset($_FILES["file"]["name"])) {
         echo "File selected <br />";
         print_r($_FILES["file"]);
     } else {
