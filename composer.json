@@ -1,0 +1,11 @@
+{
+	"autoload" : {
+		"psr-4" : {
+			"1fifoto\\signercams\\" : "src"
+		}
+	},
+	"name" : "1fifoto/signercams",
+	"require" : {
+		"php" : ">=7.1"
+	}
+}
