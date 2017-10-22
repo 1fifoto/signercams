@@ -3,7 +3,7 @@ print_r($_POST) . PHP_EOL;
 if (isset($_POST["submit"])) {
     print_r($_FILES) . PHP_EOL;
     if (isset($_FILES["file"])) {
-        $file = $_FILES["file"]["name"]
+        $file = $_FILES["file"]["name"];
         echo "File $file selected <br />";
     } else {
         echo "No file selected <br />";
