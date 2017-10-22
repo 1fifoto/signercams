@@ -1,7 +1,7 @@
 <?php
 if (isset($_POST["submit"])) {
     if (isset($_FILES["file"])) {
-        $file=$_FILES["file"]
+        $file=$_FILES["file"];
         echo "File $file selected <br />";
     } else {
         echo "No file selected <br />";
