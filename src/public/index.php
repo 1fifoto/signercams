@@ -1,11 +1,10 @@
 <?php
-print_r($_POST);
-echo "<br />";
+print_r($_POST); echo "<br />";
 if (isset($_POST["submit"])) {
-    print_r($_FILES);
-    echo "<br />";
+    print_r($_FILES); echo "<br />";
     if (isset($_FILES["file"]) && isset($_FILES["file"]["name"])) {
         $file = $_FILES["file"]["name"];
+        print_r($file); echo "<br />";
         echo "File $file selected <br />";
     } else {
         echo "No file selected <br />";
