@@ -1,11 +1,52 @@
 <?php
-print_r($_POST); echo "<br />";
 if (isset($_POST["submit"])) {
-    print_r($_FILES); echo "<br />";
-    if (isset($_FILES["file"]) && isset($_FILES["file"]["name"])) {
-        $file = $_FILES["file"]["name"];
-        print_r($file); echo "<br />";
-        echo "File $file selected <br />";
+    if (isset($_FILES["file"])) {
+        //if there was an error uploading the file
+        if ($_FILES["file"]["error"] > 0) {
+            echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
+        }
+        else {
+            //Print file details
+            echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+            echo "Type: " . $_FILES["file"]["type"] . "<br />";
+            echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+            echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
+            
+//             //if file already exists
+//             if (file_exists("upload/" . $_FILES["file"]["name"])) {
+//                 echo $_FILES["file"]["name"] . " already exists. ";
+//             }
+//             else {
+//                 //Store file in directory "upload" with the name of "uploaded_file.txt"
+//                 $storagename = "uploaded_file.txt";
+//                 move_uploaded_file($_FILES["file"]["tmp_name"], "../../upload/" . $storagename);
+//                 echo "Stored in: " . "upload/" . $_FILES["file"]["name"] . "<br />";
+//             }
+
+            $csv = array();
+            $name = $_FILES['file']['name'];
+            $ext = strtolower(end(explode('.', $_FILES['file']['name'])));
+            $type = $_FILES['file']['type'];
+            $tmpName = $_FILES['file']['tmp_name'];
+            // check the file is a csv
+            if($ext === 'csv'){
+                if(($handle = fopen($tmpName, 'r')) !== FALSE) {
+                    $row = 0;
+                    while(($data = fgetcsv($handle, 0, ',', '"', '\\')) !== FALSE) {
+//                         // number of fields in the csv
+//                         $col_count = count($data);
+                        // get the values from the csv
+                        $csv[$row]['x'] = $data[0];
+                        $csv[$row]['y'] = $data[1];
+                        $csv[$row]['z'] = $data[2];
+                        // inc the row
+                        $row++;
+                    }
+                    fclose($handle);
+                }
+            }
+            print_r($csv);
+        }
     } else {
         echo "No file selected <br />";
     }
