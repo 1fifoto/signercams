@@ -278,7 +278,7 @@ if (isset($_POST["submit"])) {
 <html>
 <?php if ($download): ?>
 <head>
-    <meta http-equiv="refresh" content="2; URL=../../download/<?php echo $filename ?>.stl">
+    <meta http-equiv="refresh" content="2; URL=download/<?php echo $filename ?>.stl">
 </head>
 <?php endif; ?>
 <body>
