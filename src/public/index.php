@@ -248,7 +248,7 @@ if (isset($_POST["submit"])) {
                 
                 // Write STL file from a PHP associative array
                 
-                $file = fopen("../../download/".$filename.".stl", "w+");
+                $file = fopen(__DIR__ . "/../../download/".$filename.".stl", "w+");
                 
                 fwrite($file, pack("a80", $solid["title"]), 80);
                 $facet_count = count($solid['facets']);
