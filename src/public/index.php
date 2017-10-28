@@ -300,26 +300,21 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
     }
 }
 ?>
-
-<!-- Output webpage or output download -->
 <html>
 <?php if ($download): ?>
 <head>
-<meta http-equiv="refresh"
-    content="2; URL=download/<?php echo $outfilename ?>.stl">
+    <meta http-equiv="refresh" content="2; URL=download/<?php echo $outfilename ?>.stl">
 </head>
 <?php endif; ?>
 <body>
     <h1>Signer Cams</h1>
     <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post"
         enctype="multipart/form-data">
-        <input type="hidden" name="MAX_FILE_SIZE" value="32768" /> <input
-            type="hidden" name="infilename" value="<?php echo $infilename; ?>" />
-        <input type="hidden" name="infiletype"
-            value="<?php echo $infiletype; ?>" /> <input type="hidden"
-            name="infilesize" value="<?php echo $infilesize; ?>" /> <input
-            type="hidden" name="infiletmpname"
-            value="<?php echo $infiletmpname; ?>" />
+        <input type="hidden" name="MAX_FILE_SIZE" value="32768" />
+        <input type="hidden" name="infilename" value="<?php echo $infilename; ?>" />
+        <input type="hidden" name="infiletype" value="<?php echo $infiletype; ?>" />
+        <input type="hidden" name="infilesize" value="<?php echo $infilesize; ?>" />
+        <input type="hidden" name="infiletmpname" value="<?php echo $infiletmpname; ?>" />
         <table>
             <tr>
                 <td>Radius</td>
@@ -342,9 +337,6 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
             </tr>
         </table>
     </form>
-    <?php if (!empty($file)): ?>
-    <p>Input File: <?php echo $infilename ?> Output File: <?php echo $outfilename ?><p>
-    <?php endif; ?>    
     <p><?php echo $message ?><p>
 </body>
 <footer>
