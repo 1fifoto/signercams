@@ -105,10 +105,11 @@ if (! empty($_POST["height"])) {
 // echo "_FILES="; print_r($_FILES); echo "<br />";
 if (isset($_FILES["file"]) && $_FILES['file']['error'] != UPLOAD_ERR_NO_FILE) {
     $infileerror = $_FILES['file']['error'];
-    $infilename = $_FILES['file']['name'];
+    $infilename = basename($_FILES['file']['name']);
     $infiletype = $_FILES['file']['type'];
     $infilesize = $_FILES["file"]["size"];
     $infiletmpname = $_FILES['file']['tmp_name'];
+    move_uploaded_file($infiletmpname, "../../upload/$infilename");
 } elseif (!empty($_POST["infilename"])) {
     $infileerror = 0;
     $infilename = $_POST["infilename"];
@@ -165,7 +166,7 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
             // Read in and parse CSV file
             $csv = array();
             $row_count = 0;
-            if (($handle = fopen($infiletmpname, 'r')) !== FALSE) {
+            if (($handle = fopen("../../upload/$infilename", 'r')) !== FALSE) {
                 while (($data = fgetcsv($handle, 0, ',', '"', '\\')) !== FALSE) {
                     if (is_numeric($data[0]) && is_numeric($data[1]) && is_numeric($data[2])) {
                         // get the values from the csv
