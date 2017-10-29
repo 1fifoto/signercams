@@ -148,9 +148,9 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
     if ($infileerror > 0) {
         
         if ($infileerror == UPLOAD_ERR_FORM_SIZE) {
-            $message = "Error: File size too big.<br />";
+            $message = "Error: CSV file size too big.<br />";
         } else if ($infileerror == UPLOAD_ERR_NO_FILE) {
-            $message = "Error: No file specified.<br />";
+            $message = "Error: No CSV file specified.<br />";
         } else {
             $message = "Error: Unknown error '$infileerror'.<br />";
         }
@@ -288,75 +288,125 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
                     fclose($file);
                     
                     $download = true; // download generated
-                    $message = "Success: Input file: '$infilename' and output file: '$outfilename'. <br />";
+                    $message = "Success: Input CSV file: '$infilename' and output STL file: '$outfilename'.stl. <br />";
                 } else {
-                    $message = "Error: Empty temporary upload file, '$infiletmpname', or invalid format.<br />";
+                    $message = "Error: Empty upload CSV file, '$infiletmpname', or invalid format.<br />";
                 }
             } else {
-                $message = "Error: Temporary upload file, '$infiletmpname', failed to open.<br />";
+                $message = "Error: upload CSV file, '$infiletmpname', failed to open.<br />";
             }
         } else {
-            $message = "Error: Invalid file extension, '$extension', type, '$infiletype', or size, '$infilesize'.<br />";
+            $message = "Error: Invalid upload CSV file extension, '$extension', type, '$infiletype', or size, '$infilesize'.<br />";
         }
     }
 }
 ?>
-<html>
-<?php if ($download): ?>
+<!doctype html>
+<html lang="en">
 <head>
+    <title>Signer Cams</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<?php if ($download): ?>
     <meta http-equiv="refresh" content="2; URL=download/<?php echo $outfilename ?>.stl">
-</head>
 <?php endif; ?>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+</head>
 <body>
-    <h1>Signer Cams</h1>
-    <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post"
-        enctype="multipart/form-data">
-        <input type="hidden" name="MAX_FILE_SIZE" value="32768" />
-        <input type="hidden" name="infilename" value="<?php echo $infilename; ?>" />
-        <input type="hidden" name="infiletype" value="<?php echo $infiletype; ?>" />
-        <input type="hidden" name="infilesize" value="<?php echo $infilesize; ?>" />
-        <input type="hidden" name="infiletmpname" value="<?php echo $infiletmpname; ?>" />
-        <p>Instructions to generate Signer X, Y, and Z Cam STL files.</p>
-        <ol>
-            <li>Enter Radius in mm (default 75).</li>
-            <li>Enter Height in mm (default 10).</li> 
-            <li>Press Choose File, select a local CSV file to upload which contains your signature as X, Y and Z columns and no headers, and press Open.</li>
-            <li>Press either Generate X Cam, Generate Y Cam, or Generate Z Cam to create and download a Signer Cam STL file.</li>
-        </ol>
-        <table>
-            <tr>
-                <td>Radius</td>
-                <td colspan="2"><input type="text" name="radius" id="radius"
-                    value="<?php echo $radius ?>" /> mm</td>
-            </tr>
-            <tr>
-                <td>Height</td>
-                <td colspan="2"><input type="text" name="height" id="height"
-                    value="<?php echo $height ?>" /> mm</td>
-            </tr>
-            <tr>
-                <td>File</td>
-                <td colspan="2"><input type="file" name="file" id="file" /></td>
-            </tr>
-            <tr>
-                <td><input type="submit" name="cam-x" value="Generate X Cam" /></td>
-            </tr>
-            <tr>
-                <td><input type="submit" name="cam-y" value="Generate Y Cam" /></td>
-            </tr>
-            <tr>
-                <td><input type="submit" name="cam-z" value="Generate Z Cam" /></td>
-            </tr>
-        </table>
-    </form>
-    <p><?php echo $message ?><p>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <!-- Custom styles for this template -->
+    <link href="css/sticky-footer-navbar.css" rel="stylesheet">
+    <div class="container">
+        <h1>
+        <a href="<?php echo $_SERVER["PHP_SELF"]; ?>"><img src="images/SignerCamsIcon.png" alt="Signer Cams Thumbnail" class="img-thumbnail"></a>
+        Signer Cams
+        </h1>
+        <div class="row small">
+            <div class="col-sm">
+                Instructions to generate Signer X, Y, and Z Cam STL files.
+                <ol>
+                    <li>Enter Radius in mm (default 75).</li>
+                    <li>Enter Height in mm (default 10).</li> 
+                    <li>Next 
+                    <ol>
+                        <li>Select the "Choose File" button.</li>
+                        <li>In the file pop-up, select a local CSV file to upload which contains your initials or signature as X, Y and Z columns in mm and no headers.</li>
+                        <li>Select the "Open" button.</li>
+                    </ol>
+                    <li>Select either the "Generate X Cam" button, the "Generate Y Cam" button, or the "Generate Z Cam" button to create and download your Signer Cam STL file.</li>
+                </ol>
+            </div>
+        </div>
+        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post" enctype="multipart/form-data">
+            <fieldset>
+            <legend>Signer Cams Input</legend>
+            <input type="hidden" name="MAX_FILE_SIZE" value="32768" />
+            <input type="hidden" name="infilename" value="<?php echo $infilename; ?>" />
+            <input type="hidden" name="infiletype" value="<?php echo $infiletype; ?>" />
+            <input type="hidden" name="infilesize" value="<?php echo $infilesize; ?>" />
+            <input type="hidden" name="infiletmpname" value="<?php echo $infiletmpname; ?>" />
+            <div class="row">
+                <div class="col-sm">
+                    <label for="radius">Radius:</label>
+                    <input type="text" name="radius" id="radius" value="<?php echo $radius ?>" /> mm
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <label for="height">Height:</label>
+                    <input type="text" name="height" id="height" value="<?php echo $height ?>" /> mm
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <label for="file">CSV File:</label>
+                    <input type="file" name="file" id="file" accept="text/csv" or accept=".csv"/>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-sm">
+                    <input type="submit" name="cam-x" value="Generate X Cam" class="btn btn-outline-primary"/>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm">
+                    <input type="submit" name="cam-y" value="Generate Y Cam" class="btn btn-outline-primary"/>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-sm">
+                    <input type="submit" name="cam-z" value="Generate Z Cam" class="btn btn-outline-primary"/>
+                </div>
+            </div>
+            </fieldset>
+        </form>
+        <div class="row mt-3">
+            <div class="col-sm">
+                <?php if (substr($message, 0, 5) == "Error") { ?>
+                <div class="alert alert-danger" role="alert">
+                <?php } else { ?>
+                <div class="alert alert-light" role="alert">
+                <?php } ?>
+                    <?php echo $message ?>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-<footer>
-    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
-        alt="Creative Commons License" style="border-width: 0"
-        src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This
-    work is licensed under a <a rel="license"
-        href="http://creativecommons.org/licenses/by/4.0/">Creative Commons
-        Attribution 4.0 International License</a>.
+<footer class="footer">
+    <div class="container">
+        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img
+            alt="Creative Commons License" style="border-width: 0"
+            src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>&nbsp;This
+        work is licensed under a <a rel="license"
+            href="http://creativecommons.org/licenses/by/4.0/">Creative Commons
+            Attribution 4.0 International License</a>.
+    </div>
 </footer>
 </html>
