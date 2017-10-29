@@ -316,16 +316,23 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
         <input type="hidden" name="infiletype" value="<?php echo $infiletype; ?>" />
         <input type="hidden" name="infilesize" value="<?php echo $infilesize; ?>" />
         <input type="hidden" name="infiletmpname" value="<?php echo $infiletmpname; ?>" />
+        <p>Instructions to generate Signer X, Y, and Z Cam STL files.</p>
+        <ol>
+            <li>Enter Radius in mm (default 75).</li>
+            <li>Enter Height in mm (default 10).</li> 
+            <li>Press Choose File, select a local CSV file to upload which contains your signature as X, Y and Z columns and no headers, and press Open.</li>
+            <li>Press either Generate X Cam, Generate Y Cam, or Generate Z Cam to create and download a Signer Cam STL file.</li>
+        </ol>
         <table>
             <tr>
                 <td>Radius</td>
                 <td colspan="2"><input type="text" name="radius" id="radius"
-                    value="<?php echo $radius ?>" /></td>
+                    value="<?php echo $radius ?>" /> mm</td>
             </tr>
             <tr>
                 <td>Height</td>
                 <td colspan="2"><input type="text" name="height" id="height"
-                    value="<?php echo $height ?>" /></td>
+                    value="<?php echo $height ?>" /> mm</td>
             </tr>
             <tr>
                 <td>File</td>
@@ -333,7 +340,11 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
             </tr>
             <tr>
                 <td><input type="submit" name="cam-x" value="Generate X Cam" /></td>
+            </tr>
+            <tr>
                 <td><input type="submit" name="cam-y" value="Generate Y Cam" /></td>
+            </tr>
+            <tr>
                 <td><input type="submit" name="cam-z" value="Generate Z Cam" /></td>
             </tr>
         </table>
