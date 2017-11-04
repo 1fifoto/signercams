@@ -6,6 +6,6 @@
 	},
 	"name" : "1fifoto/signercams",
 	"require" : {
-		"php" : ">=7.1"
+		"php" : ">=5.6"
 	}
 }
