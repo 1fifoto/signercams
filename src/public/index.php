@@ -368,32 +368,41 @@ if (! empty($_POST["height"])) {
 }
 // echo "height=". $height . "<br />";
 
-// echo "_FILES="; print_r($_FILES); echo "<br />";
-if (isset($_FILES["file"]) && $_FILES['file']['error'] != UPLOAD_ERR_NO_FILE) {
-    $infileerror = $_FILES['file']['error'];
-    $infilename = basename($_FILES['file']['name']);
-    $infiletype = $_FILES['file']['type'];
-    $infilesize = $_FILES["file"]["size"];
-    $infiletmpname = $_FILES['file']['tmp_name'];
-    move_uploaded_file($infiletmpname, "../../upload/$infilename");
-} elseif (! empty($_POST["infilename"])) {
-    $infileerror = 0;
-    $infilename = $_POST["infilename"];
-    $infiletype = $_POST["infiletype"];
-    $infilesize = $_POST["infilesize"];
-    $infiletmpname = $_POST["infiletmpname"];
+if (! empty($_POST["signatureCSV"])) {
+    $signatureCSV = $_POST["signatureCSV"];
+    $base64 = explode(',',$signatureCSV);
+    $decodedSignatureCSV = base64_decode($base64[1]);
+    
+    $infileerror = UPLOAD_ERR_NO_FILE;
+    $infilename = tempnam("../../upload", "sig");
+    $infiletype = ''; // unknown
+    $infilesize = 0;
+    
+    $matches = array();
+    preg_match('/data:(.*);/', $signatureCSV, $matches); // data:text/csv;
+    if ($matches[1] == 'text/csv') {
+        $infileerror = 0;
+        $infilename .= ".csv";
+        $infiletype = $matches[1];
+        $infilesize = strlen($decodedSignatureCSV);
+        if ($infilesize < 32768) {
+            file_put_contents($infilename, $decodedSignatureCSV);
+        } else {
+            $infileerror = UPLOAD_ERR_FORM_SIZE;
+        }
+    }
 } else {
+    $signatureCSV = "";
     $infileerror = UPLOAD_ERR_NO_FILE;
     $infilename = "";
     $infiletype = "";
-    $infilesize = "";
-    $infiletmpname = "";
+    $infilesize = 0;
 }
+echo "signatureCSV=" . $signatureCSV . "<br />";
 // echo "infileerror=" . $infileerror . "<br />";
 // echo "infilename=" . $infilename . "<br />";
 // echo "infiletype=" . $infiletype . "<br />";
 // echo "infilesize=" . $infilesize . " bytes<br />";
-// echo "infiletmpname=" . $infiletmpname . "<br />";
 
 $download = false; // download not generated
 $message = "&nbsp;"; // no output message
@@ -430,7 +439,7 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
         if ($extension === 'csv' && $infiletype == 'text/csv' && $infilesize < 32768) {
             
             // Read in and parse CSV file
-            if (($csv = read_csv_xyz("../../upload/" . $infilename)) != NULL) {
+            if (($csv = read_csv_xyz($infilename)) != NULL) {
                 
                 // Verify there is some input
                 if (count($csv) > 0) {
@@ -445,13 +454,13 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
                         $message = "Success: Input CSV file: '$infilename' and output STL file: '$outfilename'.stl. <br />";
                         
                     } else {
-                        $message = "Error: Invalid download STL file, '$infiletmpname'.<br />";
+                        $message = "Error: Failed to write STL file, '$outfilename'.<br />";
                     }
                 } else {
-                    $message = "Error: Empty upload CSV file, '$infiletmpname', or invalid format.<br />";
+                    $message = "Error: Empty upload CSV file, '$infilename', or invalid format.<br />";
                 }
             } else {
-                $message = "Error: upload CSV file, '$infiletmpname', failed to open.<br />";
+                $message = "Error: upload CSV file, '$infilename', failed to open.<br />";
             }
         } else {
             $message = "Error: Invalid upload CSV file extension, '$extension', type, '$infiletype', or size, '$infilesize'.<br />";
@@ -467,17 +476,16 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
 <meta charset="utf-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<?php if ($download): ?>
-    <meta http-equiv="refresh"
-	content="2; URL=download/<?php echo $outfilename ?>">
-<?php endif; ?>
-    <!-- Bootstrap CSS -->
+	<?php if ($download): ?>
+		<meta http-equiv="refresh" content="2; URL=download/<?php echo $outfilename ?>">
+	<?php endif; ?>
+<!-- Bootstrap CSS -->
 <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
 	integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
 	crossorigin="anonymous">
 </head>
-<body>
+<body onselectstart="return false">
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -505,15 +513,7 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
 				<ol>
 					<li>Enter Radius in mm (default 75).</li>
 					<li>Enter Height in mm (default 10).</li>
-					<li>Next
-						<ol>
-							<li>Select the "Choose File" button.</li>
-							<li>In the file pop-up, select a local CSV file to upload which
-								contains your initials or signature as X, Y and Z columns in mm
-								and no headers.</li>
-							<li>Select the "Open" button.</li>
-						</ol>
-					
+					<li>Write your initials. <i>If you make a mistake or don't like them, press Clear.</i>
 					<li>Select either the "Generate X Cam" button, the "Generate Y Cam"
 						button, or the "Generate Z Cam" button to create and download your
 						Signer Cam STL file.</li>
@@ -524,47 +524,44 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
 			enctype="multipart/form-data">
 			<fieldset>
 				<legend>Signer Cams Input</legend>
-				<input type="hidden" name="MAX_FILE_SIZE" value="32768" /> <input
-					type="hidden" name="infilename" value="<?php echo $infilename; ?>" />
-				<input type="hidden" name="infiletype"
-					value="<?php echo $infiletype; ?>" /> <input type="hidden"
-					name="infilesize" value="<?php echo $infilesize; ?>" /> <input
-					type="hidden" name="infiletmpname"
-					value="<?php echo $infiletmpname; ?>" />
+				<input type="hidden" name="signatureCSV" /> 
 				<div class="row">
 					<div class="col-sm">
 						<label for="radius">Radius:</label> <input type="text"
-							name="radius" id="radius" value="<?php echo $radius ?>" /> mm
+							name="radius" id="radius" value="<?php echo $radius ?>" class="border border-primary" /> mm
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm">
 						<label for="height">Height:</label> <input type="text"
-							name="height" id="height" value="<?php echo $height ?>" /> mm
+							name="height" id="height" value="<?php echo $height ?>" class="border border-primary" /> mm
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm">
-						<label for="file">CSV File:</label> <input type="file" name="file"
-							id="file" accept="text/csv" or accept=".csv" />
+						<span class="align-top">
+							Initials: 
+							<canvas class="border border-primary align-top"></canvas>
+							<button type="button" class="btn btn-outline-primary align-top" data-action="clear">Clear</button>
+						</span>
 					</div>
 				</div>
 				<div class="row mt-3">
 					<div class="col-sm">
 						<input type="submit" name="cam-x" value="Generate X Cam"
-							class="btn btn-outline-primary" />
+							class="btn btn-outline-primary" data-action="generate-x-cam" />
 					</div>
 				</div>
 				<div class="row mt-1">
 					<div class="col-sm">
 						<input type="submit" name="cam-y" value="Generate Y Cam"
-							class="btn btn-outline-primary" />
+							class="btn btn-outline-primary" data-action="generate-y-cam" />
 					</div>
 				</div>
 				<div class="row mt-1">
 					<div class="col-sm">
 						<input type="submit" name="cam-z" value="Generate Z Cam"
-							class="btn btn-outline-primary" />
+							class="btn btn-outline-primary" data-action="generate-z-cam" />
 					</div>
 				</div>
 			</fieldset>
@@ -581,7 +578,10 @@ if (isset($_POST["cam-x"]) || isset($_POST["cam-y"]) || isset($_POST["cam-z"])) 
 				</div>
 			</div>
 		</div>
-
+	<!-- <script
+		src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script> -->
+	<script src="js/signature_pad.js"></script>
+	<script src="js/signercams.js"></script>
 </body>
 <footer class="footer">
 	<div class="container">
